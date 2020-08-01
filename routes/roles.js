@@ -3,7 +3,7 @@ const router = express.Router();
 const {rol} = require('../js/roles');
 
 //listado de todos los roles
-router.get("/", rol.obtener);
+router.get("/", rol.listar);
 
 //devuelve un rol especifico
 router.get("/:idRol", rol.obtener);

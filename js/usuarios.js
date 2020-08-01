@@ -10,14 +10,6 @@ class Usuario extends objeto.Controller {
     }
 }
 
-const usuario = new Usuario("Usuario");
+const usuario = new Usuario("Usuarios");
 
-module.exports = {
-    /*listarUsuarios: usuario.listar, 
-    obtenerUsuario: usuario.obtener, 
-    crearUsuario: usuario.crear, 
-    actualizarUsuario: usuario.actualizar, 
-    eliminarUsuario: usuario.eliminar, 
-    obtenerRoles: usuario.obtenerRoles*/
-    usuario
-}
+module.exports = {usuario}

@@ -10,6 +10,6 @@ class Rol extends objeto.Controller {
     }
 }
 
-const rol = new Rol("Rol");
+const rol = new Rol("roles");
 
 module.exports = {rol}

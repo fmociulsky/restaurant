@@ -1,10 +1,26 @@
+const config = require("../config");
+const mysql = require('mysql');
+
 class Controller {
     constructor(recurso){
         this.recurso = recurso;
+        this.connection = mysql.createConnection({
+            Host     : config.Host,
+            user     : config.user,
+            password : config.password,
+            database : config.database,
+            socketPath: '/Applications/MAMP/tmp/mysql/mysql.sock'
+          });
+        
+        this.connection.connect();
     }
 
     listar  = (req, res) => {
-        return res.send("Lista de " + this.recurso);
+        this.connection.query('SELECT * from ' + this.recurso , function (err, rows, fields) {
+            if (err) throw err
+            return res.json(rows);
+          });
+        this.connection.end();
     }
     
     obtener = (req, res) => {

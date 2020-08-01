@@ -6,6 +6,6 @@ class Pedido extends objeto.Controller {
     }
 }
 
-const pedido = new Pedido("Pedido");
+const pedido = new Pedido("Pedidos");
 
 module.exports = {pedido}
