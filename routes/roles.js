@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {rol} = require('../js/roles');
+const {rol} = require('../controller/roles');
 
 //listado de todos los roles
 router.get("/", rol.listar);

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {pedido} = require('../js/pedidos');
+const {pedido} = require('../controller/pedidos');
 
 //listado de todos los pedidos
 router.get("/", pedido.listar);

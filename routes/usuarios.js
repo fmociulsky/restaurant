@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router();
-const {usuario} = require('../js/usuarios'); 
+const {usuario} = require('../controller/usuarios'); 
 
 //listado de todos los usuarios
 router.get("/", usuario.listar);
