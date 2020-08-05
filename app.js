@@ -1,8 +1,8 @@
 const express = require('express');
-const usuariosRouter = require("./routes/usuarios");
-const rolesRouter = require("./routes/roles");
-const productosRouter = require("./routes/productos");
-const pedidosRouter = require("./routes/pedidos");
+const usuariosRouter = require("./routes/usuariosRouter");
+const rolesRouter = require("./routes/rolesRouter");
+const productosRouter = require("./routes/productosRouter");
+const pedidosRouter = require("./routes/pedidosRouter");
 require('dotenv').config();
 
 var app = express();

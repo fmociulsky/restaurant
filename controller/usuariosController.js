@@ -26,6 +26,31 @@ class Usuario extends objeto.Controller {
         */
     }
 
+    obtener = (req, res) => {
+        this.connection.query("SELECT * from usuarios where username = '" + req.params.idUsuario + "'", function (err, rows, fields) {
+            if (err) throw err
+            return res.json(rows);
+          });
+        this.connection.end();
+    }
+
+    actualizar = (req, res) => {
+        const body = req.body;
+        this.connection.query("UPDATE usuarios SET ? where username = '" + body.username + "'", req.body , function (err, rows, fields) {
+            if (err) throw err
+            return res.send("Se actualizaron " + rows.affectedRows + " registros");
+          });
+        this.connection.end();
+    }
+
+    eliminar = (req, res) =>{
+        this.connection.query("UPDATE usuarios SET activo = 0 where username = '" + req.params.idUsuario + "'" , function (err, rows, fields) {
+            if (err) throw err
+            return res.send("Se depreco el usuario " + req.params.idUsuario);
+          });
+        this.connection.end();
+    }
+
     obtenerRoles(req, res) {
         return res.send("Roles del Usuario");
     }
