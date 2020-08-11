@@ -1,9 +1,25 @@
 const objeto = require('./controller');
 const bcrypt = require("bcrypt");
+const Usuario = require("../views/usuarioview")
+const Rol = require("../views/rolview")
 
-class Usuario extends objeto.Controller {
-    constructor(recurso){
-        super(recurso);
+class UsuarioController extends objeto.Controller{
+    constructor(tabla){
+        super();
+        this.recurso = tabla;
+    }
+
+    listar  = (req, res) => {
+        this.connection.query('SELECT * from ' + this.recurso , function (err, rows, fields) {
+            if (err) throw err
+            let usuarios = [];
+            for(let i = 0; i < rows.length; i++){
+                let usuario = new Usuario(rows[i]);
+                usuarios.push(usuario);
+            }
+            return res.json(usuarios);
+          });
+        this.connection.end();
     }
 
     crear = (req, res) => {
@@ -17,19 +33,13 @@ class Usuario extends objeto.Controller {
                 return res.send("Usuario insertado: " + body.username);
             });
         });
-        /*this.connection.connect();
-
-        this.connection.query('SELECT * from ' + this.recurso + " where username='" + body.username +"'", function (err, rows, fields) {
-            if (err) throw err
-            return res.json(rows[0]);
-          });
-        */
     }
 
     obtener = (req, res) => {
         this.connection.query("SELECT * from usuarios where username = '" + req.params.idUsuario + "'", function (err, rows, fields) {
             if (err) throw err
-            return res.json(rows);
+            let usuario = new Usuario(rows[0]);
+            return res.json(usuario);
           });
         this.connection.end();
     }
@@ -51,11 +61,20 @@ class Usuario extends objeto.Controller {
         this.connection.end();
     }
 
-    obtenerRoles(req, res) {
-        return res.send("Roles del Usuario");
+    obtenerRoles = (req, res) => {
+        this.connection.query("SELECT * from usuarios_roles where username = '" + req.params.idUsuario + "'", function (err, rows, fields) {
+            if (err) throw err
+            let roles = [];
+            for(let i = 0; i < rows.length; i++){
+                let rol = new Rol(rows[i]);
+                roles.push(rol);
+            }
+            return res.json(roles);
+          });
+        this.connection.end();
     }
 }
 
-const usuario = new Usuario("Usuarios");
+const usuario = new UsuarioController("Usuarios");
 
 module.exports = {usuario}

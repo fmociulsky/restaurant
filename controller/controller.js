@@ -4,8 +4,7 @@ const bcrypt = require("bcrypt");
 const getConnection = require('./dbUtils');
 
 class Controller {
-    constructor(recurso){
-        this.recurso = recurso;
+    constructor(){
         this.connection = getConnection();
         this.connection.connect();
     }
