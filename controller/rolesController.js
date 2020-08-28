@@ -100,5 +100,4 @@ class RolController{
 
 const rol = new RolController();
 
-debugger
 module.exports = {rol}

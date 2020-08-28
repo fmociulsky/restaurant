@@ -74,7 +74,12 @@ class UsuarioController{
         });
     }
 }
+function isAdmin(req) {
+    const query = "SELECT * from USUARIOS INNER JOIN USUARIOS_ROLES ON usuarios.username = usuarios_roles.username " +
+    "INNER JOIN ROLES ON usuarios_roles.idRol = roles.id where roles.admin = 1 and usuarios.username = ?";
+    return req.connection.query(query,{type: req.connection.QueryTypes.SELECT, replacements: [req.body.usuario]});
+}
 
 const usuario = new UsuarioController();
 
-module.exports = {usuario}
+module.exports = {usuario, isAdmin}
