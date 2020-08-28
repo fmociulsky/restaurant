@@ -1,80 +1,80 @@
-const objeto = require('./controller');
-const bcrypt = require("bcrypt");
-const Usuario = require("../views/usuarioview")
-const Rol = require("../views/rolview")
-
-class UsuarioController extends objeto.Controller{
-    constructor(tabla){
-        super();
-        this.recurso = tabla;
-    }
-
+class UsuarioController{
     listar  = (req, res) => {
-        this.connection.query('SELECT * from ' + this.recurso , function (err, rows, fields) {
-            if (err) throw err
-            let usuarios = [];
-            for(let i = 0; i < rows.length; i++){
-                let usuario = new Usuario(rows[i]);
-                usuarios.push(usuario);
+        req.connection.query('SELECT * from USUARIOS',{type: req.connection.QueryTypes.SELECT}).then(
+            function(usuarios){
+                return res.json(usuarios);
             }
-            return res.json(usuarios);
-          });
-        this.connection.end();
+        ).catch(error => {
+            console.log(error);
+            res.status(400);
+            return res.send(error.original.sqlMessage);
+        });
     }
 
     crear = (req, res) => {
         const body = req.body;
-
-        bcrypt.hash(body.password, 10).then(hash =>{
-            body.password = hash;
-            const sql = "INSERT INTO usuarios SET ?";
-            this.connection.query(sql, body,function (err, result) {
-                if (err) throw err;
+        const sql = "INSERT INTO usuarios (username, nombre, apellido) VALUES (?, ?, ?)";
+        req.connection.query(sql, {replacements: [body.username, body.nombre, body.apellido]}).then(
+            function (result) {
                 return res.send("Usuario insertado: " + body.username);
-            });
+        }).catch(error => {
+            console.log(error);
+            res.status(500);
+            return res.send(error.original.sqlMessage);
         });
     }
 
-    obtener = (req, res) => {
-        this.connection.query("SELECT * from usuarios where username = '" + req.params.idUsuario + "'", function (err, rows, fields) {
-            if (err) throw err
-            let usuario = new Usuario(rows[0]);
-            return res.json(usuario);
-          });
-        this.connection.end();
+    obtener  = (req, res) => {
+        req.connection.query('SELECT * from USUARIOS where username = ?',
+        {type: req.connection.QueryTypes.SELECT,
+        replacements: [req.params.idUsuario] }
+        ).then(
+            function(usuarios){
+                return res.json(usuarios);
+            }
+        )
     }
 
     actualizar = (req, res) => {
         const body = req.body;
-        this.connection.query("UPDATE usuarios SET ? where username = '" + body.username + "'", req.body , function (err, rows, fields) {
-            if (err) throw err
-            return res.send("Se actualizaron " + rows.affectedRows + " registros");
-          });
-        this.connection.end();
+        const sql = "UPDATE USUARIOS SET nombre = ?,  apellido = ?, activo = ? where username = ?";
+        req.connection.query(sql, {replacements: [body.nombre, body.apellido, body.activo, body.username]}).then(
+            function (result) {
+                return res.send("Usuario actualizado: " + body.username);
+        }).catch(error => {
+            console.log(error);
+            res.status(500);
+            return res.send(error.original.sqlMessage);
+        });
     }
 
-    eliminar = (req, res) =>{
-        this.connection.query("UPDATE usuarios SET activo = 0 where username = '" + req.params.idUsuario + "'" , function (err, rows, fields) {
-            if (err) throw err
-            return res.send("Se depreco el usuario " + req.params.idUsuario);
-          });
-        this.connection.end();
+    eliminar = (req, res) => {
+        const body = req.body;
+        const sql = "DELETE from USUARIOS where username = ?";
+        req.connection.query(sql, {replacements: [req.params.idUsuario]}).then(
+            function (result) {
+                return res.send("Usuario eliminado: " + req.params.idUsuario);
+        }).catch(error => {
+            console.log(error);
+            res.status(500);
+            return res.send(error.original.sqlMessage);
+        });
     }
 
-    obtenerRoles = (req, res) => {
-        this.connection.query("SELECT * from usuarios_roles where username = '" + req.params.idUsuario + "'", function (err, rows, fields) {
-            if (err) throw err
-            let roles = [];
-            for(let i = 0; i < rows.length; i++){
-                let rol = new Rol(rows[i]);
-                roles.push(rol);
+    obtenerRoles  = (req, res) => {
+        const query = "SELECT roles.id, roles.rol, roles.admin from roles INNER JOIN usuarios_roles ON roles.id = usuarios_roles.idRol where username = ?";
+        req.connection.query(query,{type: req.connection.QueryTypes.SELECT, replacements: [req.params.idUsuario]}).then(
+            function(roles){
+                return res.json(roles);
             }
-            return res.json(roles);
-          });
-        this.connection.end();
+        ).catch(error => {
+            console.log(error);
+            res.status(400);
+            return res.send(error.original.sqlMessage);
+        });
     }
 }
 
-const usuario = new UsuarioController("Usuarios");
+const usuario = new UsuarioController();
 
 module.exports = {usuario}
