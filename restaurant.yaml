@@ -10,13 +10,6 @@ info:
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"
 host: "petstore.swagger.io"
 basePath: "/v2"
-tags:
-- name: "usuario"
-  description: "Usuarios del Sistema"
-- name: "productos"
-  description: "Productos del restaurant"
-- name: "pedidos"
-  description: "Los Pedidos de Productos de los Usuarios"
 schemes:
 - "https"
 - "http"
@@ -24,7 +17,7 @@ paths:
   /usuarios:
     post:
       tags:
-      - "usuario"
+      - "usuarios"
       summary: "Agregar un nuevo Usuario al sistema"
       description: ""
       operationId: "crearUsuario"
@@ -37,657 +30,644 @@ paths:
       parameters:
       - in: "body"
         name: "body"
-        description: "Pet object that needs to be added to the store"
+        description: "Usuarios que pueden hacer uso del servicio"
         required: true
         schema:
-          $ref: "#/definitions/Pet"
-      responses:
-        "405":
-          description: "Invalid input"
-      security:
-      - petstore_auth:
-        - "write:pets"
-        - "read:pets"
-    put:
-      tags:
-      - "pet"
-      summary: "Update an existing pet"
-      description: ""
-      operationId: "updatePet"
-      consumes:
-      - "application/json"
-      - "application/xml"
-      produces:
-      - "application/xml"
-      - "application/json"
-      parameters:
-      - in: "body"
-        name: "body"
-        description: "Pet object that needs to be added to the store"
-        required: true
-        schema:
-          $ref: "#/definitions/Pet"
-      responses:
-        "400":
-          description: "Invalid ID supplied"
-        "404":
-          description: "Pet not found"
-        "405":
-          description: "Validation exception"
-      security:
-      - petstore_auth:
-        - "write:pets"
-        - "read:pets"
-  /pet/findByStatus:
-    get:
-      tags:
-      - "pet"
-      summary: "Finds Pets by status"
-      description: "Multiple status values can be provided with comma separated strings"
-      operationId: "findPetsByStatus"
-      produces:
-      - "application/xml"
-      - "application/json"
-      parameters:
-      - name: "status"
-        in: "query"
-        description: "Status values that need to be considered for filter"
-        required: true
-        type: "array"
-        items:
-          type: "string"
-          enum:
-          - "available"
-          - "pending"
-          - "sold"
-          default: "available"
-        collectionFormat: "multi"
+          $ref: "#/definitions/Usuario"
       responses:
         "200":
-          description: "successful operation"
-          schema:
-            type: "array"
-            items:
-              $ref: "#/definitions/Pet"
-        "400":
-          description: "Invalid status value"
-      security:
-      - petstore_auth:
-        - "write:pets"
-        - "read:pets"
-  /pet/findByTags:
+          description: "Usuario insertado: username"
+        "500":
+          description: "Detalle del error"
     get:
       tags:
-      - "pet"
-      summary: "Finds Pets by tags"
-      description: "Muliple tags can be provided with comma separated strings. Use         tag1, tag2, tag3 for testing."
-      operationId: "findPetsByTags"
+      - "usuarios"
+      summary: "Listado completo de Usuarios"
+      operationId: "obtenerUsuarios"
       produces:
       - "application/xml"
-      - "application/json"
-      parameters:
-      - name: "tags"
-        in: "query"
-        description: "Tags to filter by"
-        required: true
-        type: "array"
-        items:
-          type: "string"
-        collectionFormat: "multi"
-      responses:
-        "200":
-          description: "successful operation"
-          schema:
-            type: "array"
-            items:
-              $ref: "#/definitions/Pet"
-        "400":
-          description: "Invalid tag value"
-      security:
-      - petstore_auth:
-        - "write:pets"
-        - "read:pets"
-      deprecated: true
-  /pet/{petId}:
-    get:
-      tags:
-      - "pet"
-      summary: "Find pet by ID"
-      description: "Returns a single pet"
-      operationId: "getPetById"
-      produces:
-      - "application/xml"
-      - "application/json"
-      parameters:
-      - name: "petId"
-        in: "path"
-        description: "ID of pet to return"
-        required: true
-        type: "integer"
-        format: "int64"
-      responses:
-        "200":
-          description: "successful operation"
-          schema:
-            $ref: "#/definitions/Pet"
-        "400":
-          description: "Invalid ID supplied"
-        "404":
-          description: "Pet not found"
-      security:
-      - api_key: []
-    post:
-      tags:
-      - "pet"
-      summary: "Updates a pet in the store with form data"
-      description: ""
-      operationId: "updatePetWithForm"
-      consumes:
-      - "application/x-www-form-urlencoded"
-      produces:
-      - "application/xml"
-      - "application/json"
-      parameters:
-      - name: "petId"
-        in: "path"
-        description: "ID of pet that needs to be updated"
-        required: true
-        type: "integer"
-        format: "int64"
-      - name: "name"
-        in: "formData"
-        description: "Updated name of the pet"
-        required: false
-        type: "string"
-      - name: "status"
-        in: "formData"
-        description: "Updated status of the pet"
-        required: false
-        type: "string"
-      responses:
-        "405":
-          description: "Invalid input"
-      security:
-      - petstore_auth:
-        - "write:pets"
-        - "read:pets"
-    delete:
-      tags:
-      - "pet"
-      summary: "Deletes a pet"
-      description: ""
-      operationId: "deletePet"
-      produces:
-      - "application/xml"
-      - "application/json"
-      parameters:
-      - name: "api_key"
-        in: "header"
-        required: false
-        type: "string"
-      - name: "petId"
-        in: "path"
-        description: "Pet id to delete"
-        required: true
-        type: "integer"
-        format: "int64"
-      responses:
-        "400":
-          description: "Invalid ID supplied"
-        "404":
-          description: "Pet not found"
-      security:
-      - petstore_auth:
-        - "write:pets"
-        - "read:pets"
-  /pet/{petId}/uploadImage:
-    post:
-      tags:
-      - "pet"
-      summary: "uploads an image"
-      description: ""
-      operationId: "uploadFile"
-      consumes:
-      - "multipart/form-data"
-      produces:
-      - "application/json"
-      parameters:
-      - name: "petId"
-        in: "path"
-        description: "ID of pet to update"
-        required: true
-        type: "integer"
-        format: "int64"
-      - name: "additionalMetadata"
-        in: "formData"
-        description: "Additional data to pass to server"
-        required: false
-        type: "string"
-      - name: "file"
-        in: "formData"
-        description: "file to upload"
-        required: false
-        type: "file"
-      responses:
-        "200":
-          description: "successful operation"
-          schema:
-            $ref: "#/definitions/ApiResponse"
-      security:
-      - petstore_auth:
-        - "write:pets"
-        - "read:pets"
-  /store/inventory:
-    get:
-      tags:
-      - "store"
-      summary: "Returns pet inventories by status"
-      description: "Returns a map of status codes to quantities"
-      operationId: "getInventory"
-      produces:
       - "application/json"
       parameters: []
       responses:
         "200":
           description: "successful operation"
           schema:
-            type: "object"
-            additionalProperties:
-              type: "integer"
-              format: "int32"
-      security:
-      - api_key: []
-  /store/order:
-    post:
+            type: "array"
+            items:
+              $ref: "#/definitions/Usuario"
+    put:
       tags:
-      - "store"
-      summary: "Place an order for a pet"
+      - "usuarios"
+      summary: "Actualiza un Usuario del sistema"
       description: ""
-      operationId: "placeOrder"
+      operationId: "actualizarUsuario"
+      consumes:
+      - "application/json"
+      - "application/xml"
       produces:
       - "application/xml"
       - "application/json"
       parameters:
       - in: "body"
         name: "body"
-        description: "order placed for purchasing the pet"
+        description: "Usuario que se desea actualizar"
         required: true
         schema:
-          $ref: "#/definitions/Order"
+          $ref: "#/definitions/Usuario"
       responses:
         "200":
-          description: "successful operation"
-          schema:
-            $ref: "#/definitions/Order"
+          description: "Usuario actualizado: username"
         "400":
-          description: "Invalid Order"
-  /store/order/{orderId}:
+          description: "No se realizaron cambios"
+  /usuarios/{idUsuario}:
     get:
       tags:
-      - "store"
-      summary: "Find purchase order by ID"
-      description: "For valid response try integer IDs with value >= 1 and <= 10.         Other values will generated exceptions"
-      operationId: "getOrderById"
+      - "usuarios"
+      summary: "Destalle del Usuario"
+      operationId: "obtenerUsuario"
       produces:
       - "application/xml"
       - "application/json"
       parameters:
-      - name: "orderId"
+      - name: "idUsuario"
         in: "path"
-        description: "ID of pet that needs to be fetched"
+        description: "Username del Usuario que se desea obtener"
         required: true
-        type: "integer"
-        maximum: 10.0
-        minimum: 1.0
-        format: "int64"
+        type: "string"
       responses:
         "200":
           description: "successful operation"
           schema:
-            $ref: "#/definitions/Order"
-        "400":
-          description: "Invalid ID supplied"
-        "404":
-          description: "Order not found"
+              $ref: "#/definitions/Usuario"
     delete:
       tags:
-      - "store"
-      summary: "Delete purchase order by ID"
-      description: "For valid response try integer IDs with positive integer value.         Negative or non-integer values will generate API errors"
-      operationId: "deleteOrder"
+      - "usuarios"
+      summary: "Eliminar un usuario"
+      operationId: "eliminarUsuario"
       produces:
       - "application/xml"
       - "application/json"
       parameters:
-      - name: "orderId"
+      - name: "idUsuario"
         in: "path"
-        description: "ID of the order that needs to be deleted"
-        required: true
-        type: "integer"
-        minimum: 1.0
-        format: "int64"
-      responses:
-        "400":
-          description: "Invalid ID supplied"
-        "404":
-          description: "Order not found"
-  /user:
-    post:
-      tags:
-      - "user"
-      summary: "Create user"
-      description: "This can only be done by the logged in user."
-      operationId: "createUser"
-      produces:
-      - "application/xml"
-      - "application/json"
-      parameters:
-      - in: "body"
-        name: "body"
-        description: "Created user object"
-        required: true
-        schema:
-          $ref: "#/definitions/User"
-      responses:
-        default:
-          description: "successful operation"
-  /user/createWithArray:
-    post:
-      tags:
-      - "user"
-      summary: "Creates list of users with given input array"
-      description: ""
-      operationId: "createUsersWithArrayInput"
-      produces:
-      - "application/xml"
-      - "application/json"
-      parameters:
-      - in: "body"
-        name: "body"
-        description: "List of user object"
-        required: true
-        schema:
-          type: "array"
-          items:
-            $ref: "#/definitions/User"
-      responses:
-        default:
-          description: "successful operation"
-  /user/createWithList:
-    post:
-      tags:
-      - "user"
-      summary: "Creates list of users with given input array"
-      description: ""
-      operationId: "createUsersWithListInput"
-      produces:
-      - "application/xml"
-      - "application/json"
-      parameters:
-      - in: "body"
-        name: "body"
-        description: "List of user object"
-        required: true
-        schema:
-          type: "array"
-          items:
-            $ref: "#/definitions/User"
-      responses:
-        default:
-          description: "successful operation"
-  /user/login:
-    get:
-      tags:
-      - "user"
-      summary: "Logs user into the system"
-      description: ""
-      operationId: "loginUser"
-      produces:
-      - "application/xml"
-      - "application/json"
-      parameters:
-      - name: "username"
-        in: "query"
-        description: "The user name for login"
+        description: "Username del Usuario que se desea eliminar"
         required: true
         type: "string"
-      - name: "password"
-        in: "query"
-        description: "The password for login in clear text"
+      responses:
+        "200":
+          description: "successful operation"
+  /usuarios/{idUsuario}/roles:
+    get:
+      tags:
+      - "usuarios"
+      summary: "Listado de los roles que tiene asignado un Usuario"
+      operationId: "obtenerRolesUsuario"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "idUsuario"
+        in: "path"
+        description: "Username del Usuario que se desea obtener los roles"
         required: true
         type: "string"
       responses:
         "200":
           description: "successful operation"
           schema:
-            type: "string"
-          headers:
-            X-Rate-Limit:
-              type: "integer"
-              format: "int32"
-              description: "calls per hour allowed by the user"
-            X-Expires-After:
-              type: "string"
-              format: "date-time"
-              description: "date in UTC when token expires"
-        "400":
-          description: "Invalid username/password supplied"
-  /user/logout:
+            type: "array"
+            items:
+              $ref: "#/definitions/Rol"
+  /roles:
+    post:
+      tags:
+      - "roles"
+      summary: "Agregar un nuevo Rol al sistema"
+      description: ""
+      operationId: "crearRol"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Roles que estaran disponibles para los usuarios"
+        required: true
+        schema:
+          $ref: "#/definitions/Rol"
+      responses:
+        "200":
+          description: "Rol insertado: rol"
+        "500":
+          description: "Detalle del error"
     get:
       tags:
-      - "user"
-      summary: "Logs out current logged in user session"
-      description: ""
-      operationId: "logoutUser"
+      - "roles"
+      summary: "Listado completo de Roles"
+      operationId: "obtenerRoles"
       produces:
       - "application/xml"
       - "application/json"
       parameters: []
       responses:
-        default:
+        "200":
           description: "successful operation"
-  /user/{username}:
-    get:
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Rol"
+    put:
       tags:
-      - "user"
-      summary: "Get user by user name"
+      - "roles"
+      summary: "Actualiza un Rol"
       description: ""
-      operationId: "getUserByName"
+      operationId: "actualizarRol"
+      consumes:
+      - "application/json"
+      - "application/xml"
       produces:
       - "application/xml"
       - "application/json"
       parameters:
-      - name: "username"
+      - in: "body"
+        name: "body"
+        description: "Rol que se desea actualizar"
+        required: true
+        schema:
+          $ref: "#/definitions/Rol"
+      responses:
+        "200":
+          description: "Rol actualizado: rol"
+        "400":
+          description: "No se realizaron cambios"
+  /roles/{idRol}:
+    get:
+      tags:
+      - "roles"
+      summary: "Detalle del Rol"
+      operationId: "obtenerRol"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "idRol"
         in: "path"
-        description: "The name that needs to be fetched. Use user1 for testing. "
+        description: "Id del Rol que se desea obtener"
+        required: true
+        type: "integer"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+              $ref: "#/definitions/Rol"
+    delete:
+      tags:
+      - "roles"
+      summary: "Eliminar un rol"
+      operationId: "eliminarRol"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "idRol"
+        in: "path"
+        description: "Id del Rol que se desea eliminar"
         required: true
         type: "string"
       responses:
         "200":
           description: "successful operation"
-          schema:
-            $ref: "#/definitions/User"
-        "400":
-          description: "Invalid username supplied"
-        "404":
-          description: "User not found"
-    put:
+        "500":
+          description: "El Rol rol no se puede eliminar ya que se encuentra asignado a usuarios"
+  /roles/asignar:
+    post:
       tags:
-      - "user"
-      summary: "Updated user"
-      description: "This can only be done by the logged in user."
-      operationId: "updateUser"
+      - "roles"
+      summary: "Relaciona un Usurio con un Rol"
+      description: ""
+      operationId: "asignarRol"
+      consumes:
+      - "application/json"
+      - "application/xml"
       produces:
       - "application/xml"
       - "application/json"
       parameters:
-      - name: "username"
-        in: "path"
-        description: "name that need to be updated"
-        required: true
-        type: "string"
       - in: "body"
         name: "body"
-        description: "Updated user object"
+        description: "Roles que estaran disponibles para los usuarios"
         required: true
         schema:
-          $ref: "#/definitions/User"
+          $ref: "#/definitions/UsuarioRol"
       responses:
+        "200":
+          description: "Rol asignado al usuario"
+        "500":
+          description: "Detalle del error"
+  /roles/desasignar:
+    post:
+      tags:
+      - "roles"
+      summary: "Remueve la relacion de un Usurio con un Rol"
+      description: ""
+      operationId: "asignarRol"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Roles que estaran disponibles para los usuarios"
+        required: true
+        schema:
+          $ref: "#/definitions/UsuarioRol"
+      responses:
+        "200":
+          description: "Rol desasignado al usuario"
+        "500":
+          description: "El Rol no estaba asignado al usuario"
+  /productos:
+    post:
+      tags:
+      - "productos"
+      summary: "Agregar un nuevo Producto al sistema"
+      description: ""
+      operationId: "crearProducto"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Productos que pueden solicitar en los pedidos"
+        required: true
+        schema:
+          $ref: "#/definitions/Producto"
+      responses:
+        "200":
+          description: "Producto insertado: nombre"
+        "401":
+          description: "El usuario no tiene el rol Administrador"
+        "500":
+          description: "Detalle del error"
+    get:
+      tags:
+      - "productos"
+      summary: "Listado completo de Productos"
+      operationId: "obtenerProductos"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters: []
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Producto"
+    put:
+      tags:
+      - "productos"
+      summary: "Actualiza un Producto del sistema"
+      description: ""
+      operationId: "actualizarProducto"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Producto que se desea actualizar"
+        required: true
+        schema:
+          $ref: "#/definitions/Producto"
+      responses:
+        "200":
+          description: "Producto actualizado: producto"
         "400":
-          description: "Invalid user supplied"
-        "404":
-          description: "User not found"
+          description: "No se realizaron cambios"
+        "401":
+          description: "El usuario no tiene el rol Administrador"
+  /productos/{idProducto}:
+    get:
+      tags:
+      - "productos"
+      summary: "Detalle del Producto"
+      operationId: "obtenerProducto"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "idProducto"
+        in: "path"
+        description: "Id del Producto que se desea obtener"
+        required: true
+        type: "integer"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+              $ref: "#/definitions/Producto"
     delete:
       tags:
-      - "user"
-      summary: "Delete user"
-      description: "This can only be done by the logged in user."
-      operationId: "deleteUser"
+      - "productos"
+      summary: "Eliminar un Producto"
+      operationId: "eliminarProducto"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "idProducto"
+        in: "path"
+        description: "Id del Producto que se desea eliminar"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "successful operation"
+        "401":
+          description: "El usuario no tiene el rol Administrador"
+        "500":
+          description: "El Producto no se puede eliminar ya que se encuentra asignado a un pedido, puede deshabilitarlo"
+  /productos/deshabilitar/{idProducto}:
+    put:
+      tags:
+      - "productos"
+      summary: "Deshabilitar un Producto para que no pueda ser pedido"
+      operationId: "deshabilitarProducto"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "idProducto"
+        in: "path"
+        description: "Id del Producto que se desea deshabilitar"
+        required: true
+        type: "integer"
+      responses:
+        "200":
+          description: "Producto deshabilitado"
+        "401":
+          description: "El usuario no tiene el rol Administrador"
+  /productos/habilitar/{idProducto}:
+    put:
+      tags:
+      - "productos"
+      summary: "Habilitar un Producto para que no pueda ser pedido"
+      operationId: "habilitarProducto"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "idProducto"
+        in: "path"
+        description: "Id del Producto que se desea habilitar"
+        required: true
+        type: "integer"
+      responses:
+        "200":
+          description: "Producto shabilitado"
+        "401":
+          description: "El usuario no tiene el rol Administrador"
+  /productos/listarHabilitados:
+    get:
+      tags:
+      - "productos"
+      summary: "Listado completo de Productos habilitados"
+      operationId: "obtenerProductosHabilitados"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters: []
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Producto"
+  /pedidos:
+    post:
+      tags:
+      - "pedidos"
+      summary: "Agregar un nuevo Pedido al sistema"
+      description: ""
+      operationId: "crearPedido"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Pedido que se desea solicitar"
+        required: true
+        schema:
+          $ref: "#/definitions/Pedido"
+      responses:
+        "200":
+          description: "Pedido insertado"
+        "500":
+          description: "Detalle del error"
+    get:
+      tags:
+      - "pedidos"
+      summary: "Listado completo de los Pedidos"
+      operationId: "obtenerPedidos"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters: []
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Pedido"
+    put:
+      tags:
+      - "pedidos"
+      summary: "Actualiza un Pedido del sistema"
+      description: ""
+      operationId: "actualizarPedidoo"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Pedido que se desea actualizar"
+        required: true
+        schema:
+          $ref: "#/definitions/Pedido"
+      responses:
+        "200":
+          description: "Pedido actualizado"
+        "400":
+          description: "No se realizaron cambios"
+        "401":
+          description: "El usuario no tiene el rol Administrador"
+  /pedidos/{idPedido}:
+    get:
+      tags:
+      - "pedidos"
+      summary: "Detalle del Pedido"
+      operationId: "obtenerPedido"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "idPedido"
+        in: "path"
+        description: "Id del Pedido que se desea obtener"
+        required: true
+        type: "integer"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+              $ref: "#/definitions/Pedido"
+    delete:
+      tags:
+      - "pedidos"
+      summary: "Eliminar un Pedido"
+      operationId: "eliminarPedido"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "idPedido"
+        in: "path"
+        description: "Id del Pedido que se desea eliminar"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "successful operation"
+        "401":
+          description: "El usuario no tiene el rol Administrador"
+  /pedidos/cliente/{username}:
+    get:
+      tags:
+      - "pedidos"
+      summary: "Listado de Pedidos de un Cliente"
+      operationId: "obtenerPedidosCliente"
       produces:
       - "application/xml"
       - "application/json"
       parameters:
       - name: "username"
         in: "path"
-        description: "The name that needs to be deleted"
+        description: "Username del Cliente que se desean listar los Pedidos"
         required: true
-        type: "string"
+        type: "integer"
       responses:
-        "400":
-          description: "Invalid username supplied"
-        "404":
-          description: "User not found"
-securityDefinitions:
-  petstore_auth:
-    type: "oauth2"
-    authorizationUrl: "http://petstore.swagger.io/oauth/dialog"
-    flow: "implicit"
-    scopes:
-      write:pets: "modify pets in your account"
-      read:pets: "read your pets"
-  api_key:
-    type: "apiKey"
-    name: "api_key"
-    in: "header"
+        "200":
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Pedido"
 definitions:
-  Order:
+  Usuario:
+    type: "object"
+    properties:
+      username:
+        type: "string"
+      nombre:
+        type: "string"
+      apellido:
+        type: "string"
+      activo:
+        type: "boolean"
+        default: true
+    xml:
+      name: "Usuario"
+  Rol:
     type: "object"
     properties:
       id:
         type: "integer"
         format: "int64"
-      petId:
-        type: "integer"
-        format: "int64"
-      quantity:
-        type: "integer"
-        format: "int32"
-      shipDate:
+      rol:
         type: "string"
-        format: "date-time"
-      status:
-        type: "string"
-        description: "Order Status"
-        enum:
-        - "placed"
-        - "approved"
-        - "delivered"
-      complete:
+      admin:
         type: "boolean"
         default: false
     xml:
-      name: "Order"
-  Category:
+      name: "Rol"
+  Producto:
     type: "object"
     properties:
       id:
         type: "integer"
         format: "int64"
-      name:
+      nombre:
         type: "string"
+      detalle:
+        type: "string"
+      precio:
+        type: "number"
+      activo:
+        type: "boolean"
+        default: true
     xml:
-      name: "Category"
-  User:
+      name: "Producto"
+  Pedido:
     type: "object"
     properties:
       id:
         type: "integer"
         format: "int64"
+      idProducto:
+        type: "integer"
+        format: "int64"
+        description: "id del producto pedido"
       username:
         type: "string"
-      firstName:
-        type: "string"
-      lastName:
-        type: "string"
-      email:
-        type: "string"
-      password:
-        type: "string"
-      phone:
-        type: "string"
-      userStatus:
-        type: "integer"
-        format: "int32"
-        description: "User Status"
-    xml:
-      name: "User"
-  Tag:
-    type: "object"
-    properties:
-      id:
+        description: "usuario del cliente que hizo el pedido"
+      cantidad:
         type: "integer"
         format: "int64"
-      name:
-        type: "string"
-    xml:
-      name: "Tag"
-  Pet:
-    type: "object"
-    required:
-    - "name"
-    - "photoUrls"
-    properties:
-      id:
-        type: "integer"
-        format: "int64"
-      category:
-        $ref: "#/definitions/Category"
-      name:
-        type: "string"
-        example: "doggie"
-      photoUrls:
-        type: "array"
-        xml:
-          name: "photoUrl"
-          wrapped: true
-        items:
-          type: "string"
-      tags:
-        type: "array"
-        xml:
-          name: "tag"
-          wrapped: true
-        items:
-          $ref: "#/definitions/Tag"
-      status:
-        type: "string"
-        description: "pet status in the store"
+      estado:
+        type: "number"
+        description: "estado del pedido"
         enum:
-        - "available"
-        - "pending"
-        - "sold"
+        - "creado"
+        - "en_preparacion"
+        - "finalizado"
+        - "entregado"
+        - "cancelado"
     xml:
-      name: "Pet"
-  ApiResponse:
+      name: "Producto"
+  UsuarioRol:
     type: "object"
     properties:
-      code:
+      username:
+        type: "string"
+      idRol:
         type: "integer"
-        format: "int32"
-      type:
-        type: "string"
-      message:
-        type: "string"
+    xml:
+      name: "UsuarioRol"
 externalDocs:
   description: "Find out more about Swagger"
   url: "http://swagger.io"

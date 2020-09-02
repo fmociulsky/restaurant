@@ -40,6 +40,7 @@ class UsuarioController{
         const sql = "UPDATE USUARIOS SET nombre = ?,  apellido = ?, activo = ? where username = ?";
         req.connection.query(sql, {replacements: [body.nombre, body.apellido, body.activo, body.username]}).then(
             function (result) {
+                if(result[0].affectedRows == 0) return res.send("No se realizaron cambios");
                 return res.send("Usuario actualizado: " + body.username);
         }).catch(error => {
             console.log(error);
@@ -53,6 +54,7 @@ class UsuarioController{
         const sql = "DELETE from USUARIOS where username = ?";
         req.connection.query(sql, {replacements: [req.params.idUsuario]}).then(
             function (result) {
+                if(result[0].affectedRows == 0) return res.send("El Usuario : " + req.params.idUsuario + " no existe");
                 return res.send("Usuario eliminado: " + req.params.idUsuario);
         }).catch(error => {
             console.log(error);

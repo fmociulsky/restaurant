@@ -21,6 +21,7 @@ function checkAdmin(req, res, next){
                  if(usuarios.length > 0){
                      return next();
                  }else{
+                     res.status(401);
                      res.send("El usuario " + req.body.usuario + " no tiene el rol Administrador");
                  }
              }).catch(error => {

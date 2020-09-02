@@ -52,6 +52,7 @@ class ProductoController{
         const sql = "UPDATE PRODUCTOS SET nombre = ?, detalle = ?, precio = ?, activo = ? where id = ?";
         req.connection.query(sql, {replacements: [body.nombre, body.detalle, body.precio, body.activo, body.id]}).then(
             function (result) {
+                if(result[0].affectedRows == 0) return res.send("No se realizaron cambios");
                 return res.send("Producto actualizado: " + body.nombre);
         }).catch(error => {
             console.log(error);
@@ -65,6 +66,7 @@ class ProductoController{
         const sql = "UPDATE PRODUCTOS SET activo = 0 where id = ?";
         req.connection.query(sql, {replacements: [req.params.idProducto]}).then(
             function (result) {
+                if(result[0].affectedRows == 0) return res.send("No se realizaron cambios");
                 return res.send("Producto deshabilitado: " + req.params.idProducto);
         }).catch(error => {
             console.log(error);
@@ -78,6 +80,7 @@ class ProductoController{
         const sql = "UPDATE PRODUCTOS SET activo = 1 where id = ?";
         req.connection.query(sql, {replacements: [req.params.idProducto]}).then(
             function (result) {
+                if(result[0].affectedRows == 0) return res.send("No se realizaron cambios");
                 return res.send("Producto habilitado: " + req.params.idProducto);
         }).catch(error => {
             console.log(error);
@@ -95,6 +98,7 @@ class ProductoController{
                 const sql = "DELETE from PRODUCTOS where id = ?";
                 req.connection.query(sql, {replacements: [req.params.idProducto]}).then(
                     function (result) {
+                        if(result[0].affectedRows == 0) return res.send("El Producto nro: " + req.params.idProducto + " no existe");
                         return res.send("Producto eliminado: " + req.params.idProducto);
                 }).catch(error => {
                     console.log(error);

@@ -15,7 +15,7 @@ app.use(conectar);
 app.use('/usuarios', usuariosRouter);
 app.use('/roles', rolesRouter);
 app.use('/productos', checkAdmin, productosRouter);
-app.use('/pedidos', pedidosRouter);
+app.use('/pedidos', checkAdmin, pedidosRouter);
 
 app.listen(port, () =>  {
     console.log('Servidor escuchando en el puerto ' + port)

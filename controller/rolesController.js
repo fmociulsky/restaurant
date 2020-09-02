@@ -16,7 +16,6 @@ class RolController{
         const sql = "INSERT INTO ROLES (rol, admin) VALUES (?, ?)";
         req.connection.query(sql, {replacements: [body.rol, body.admin]}).then(
             function (result) {
-                debugger
                 return res.send("Rol insertado: " + body.rol);
         }).catch(error => {
             console.log(error);
@@ -41,6 +40,7 @@ class RolController{
         const sql = "UPDATE ROLES SET rol = ?, admin = ? where id = ?";
         req.connection.query(sql, {replacements: [body.rol, body.admin, body.id]}).then(
             function (result) {
+                if(result[0].affectedRows == 0) return res.send("No se realizaron cambios");
                 return res.send("Rol actualizado: " + body.rol);
         }).catch(error => {
             console.log(error);
@@ -58,6 +58,7 @@ class RolController{
                 const sql = "DELETE from ROLES where id = ?";
                 req.connection.query(sql, {replacements: [req.params.idRol]}).then(
                     function (result) {
+                        if(result[0].affectedRows == 0) return res.send("El Rol: " + req.params.idRol + " no existe");
                         return res.send("Rol eliminado: " + req.params.idRol);
                 }).catch(error => {
                     console.log(error);
@@ -89,6 +90,7 @@ class RolController{
         const sql = "DELETE from USUARIOS_ROLES where username = ? AND idRol = ?)";
         req.connection.query(sql, {replacements: [body.username, body.idRol]}).then(
             function (result) {
+                if(result[0].affectedRows == 0) return res.send("El Rol: " + body.idRol + " no estaba asignado al usuario " + body.username);
                 return res.send("Rol " + body.idRol + " desasignado al Usuario " + body.username);
         }).catch(error => {
             console.log(error);

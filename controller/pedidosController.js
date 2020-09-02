@@ -15,7 +15,6 @@ class PedidoController{
         const body = req.body;
         const productos = body.productos;
         const sql = "INSERT INTO PEDIDOS (username, idProducto, cantidad) VALUES (?, ?, ?)";
-        let respuesta = [];
         for (let i = 0; i < productos.length; i++) {
             const idProducto = productos[i].idProduct;
             const cantidad = productos[i].cantidad;
@@ -54,6 +53,7 @@ class PedidoController{
                     const sql = "UPDATE PEDIDOS SET username = ?,  idProducto = ?, estado = ?, cantidad = ? where id = ?";
                     req.connection.query(sql, {replacements: [body.username, body.idProducto, body.estado, body.cantidad, body.id]}).then(
                         function (result) {
+                            if(result[0].affectedRows == 0) return res.send("No se realizaron cambios");
                             return res.send("Pedido actualizado: " + body.idProducto + " - " + body.username);
                     }).catch(error => {
                         console.log(error);
@@ -62,7 +62,7 @@ class PedidoController{
                     });
                 }else{
                     res.status(500);
-                    return res.send("El usuario no puede modificar los pedidos porque no tiene el rol Administrador");
+                    return res.send("El usuario " + body.usuario + " no puede modificar los pedidos porque no tiene el rol Administrador");
                 }
             }
         ).catch(error => {
@@ -78,15 +78,26 @@ class PedidoController{
 
     eliminar = (req, res) => {
         const body = req.body;
-        const sql = "DELETE from PEDIDOS where id = ?";
-        req.connection.query(sql, {replacements: [req.params.idPedido]}).then(
-            function (result) {
-                return res.send("Pedido eliminado: " + req.params.idPedido);
-        }).catch(error => {
-            console.log(error);
-            res.status(500);
-            return res.send(error.original.sqlMessage);
-        });
+        const query = "SELECT * from USUARIOS INNER JOIN USUARIOS_ROLES ON usuarios.username = usuarios_roles.username " +
+        "INNER JOIN ROLES ON usuarios_roles.idRol = roles.id where roles.admin = 1 and usuarios.username = ?";
+        req.connection.query(query,{type: req.connection.QueryTypes.SELECT, replacements: [body.usuario]}).then(
+            function (usuarios) {
+                if(usuarios.length > 0){
+                    const sql = "DELETE from PEDIDOS where id = ?";
+                    req.connection.query(sql, {replacements: [req.params.idPedido]}).then(
+                        function (result) {
+                            if(result[0].affectedRows == 0) return res.send("El Pedido nro: " +req.params.idPedido + " no existe");
+                            return res.send("Pedido eliminado: " + req.params.idPedido);
+                    }).catch(error => {
+                        console.log(error);
+                        res.status(500);
+                        return res.send(error.original.sqlMessage);
+                    });
+                }else{
+                    res.status(500);
+                    return res.send("El usuario " + body.usuario + " no puede modificar los pedidos porque no tiene el rol Administrador");
+                }
+            });
     }
 
     obtenerPedidosCliente  = (req, res) => {
