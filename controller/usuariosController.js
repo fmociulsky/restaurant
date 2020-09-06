@@ -1,4 +1,27 @@
 class UsuarioController{
+    login  = (req, res) => {
+        const utils = require('../utils');
+        let body = req.body;
+        req.connection.query('SELECT * from USUARIOS where username = ? and password = ?',{
+            type: req.connection.QueryTypes.SELECT,
+            replacements: [body.username, body.password]}).then(
+            function(usuarios){
+                if(usuarios.length != 0){
+                    let token = utils.generarToken(usuarios[0].username);
+                    return res.json({token});
+                }else {
+                    res.status(401);
+                    return res.send("El usuario no existe o el password es incorrecto");
+                }
+            }
+        ).catch(error => {
+            console.log(error);
+            res.status(400);
+            return res.send(error.original.sqlMessage);
+        });
+    }
+
+
     listar  = (req, res) => {
         req.connection.query('SELECT * from USUARIOS',{type: req.connection.QueryTypes.SELECT}).then(
             function(usuarios){
@@ -13,8 +36,8 @@ class UsuarioController{
 
     crear = (req, res) => {
         const body = req.body;
-        const sql = "INSERT INTO usuarios (username, nombre, apellido) VALUES (?, ?, ?)";
-        req.connection.query(sql, {replacements: [body.username, body.nombre, body.apellido]}).then(
+        const sql = "INSERT INTO usuarios (username, password, nombre, apellido) VALUES (?, ?, ?, ?)";
+        req.connection.query(sql, {replacements: [body.username, body.password, body.nombre, body.apellido]}).then(
             function (result) {
                 return res.send("Usuario insertado: " + body.username);
         }).catch(error => {
@@ -25,9 +48,11 @@ class UsuarioController{
     }
 
     obtener  = (req, res) => {
+        const auth = req.headers.authorization
+        const username = jwt.verify(token, password);
         req.connection.query('SELECT * from USUARIOS where username = ?',
         {type: req.connection.QueryTypes.SELECT,
-        replacements: [req.params.idUsuario] }
+        replacements: [username]}
         ).then(
             function(usuarios){
                 return res.json(usuarios);
@@ -82,6 +107,23 @@ function isAdmin(req) {
     return req.connection.query(query,{type: req.connection.QueryTypes.SELECT, replacements: [req.body.usuario]});
 }
 
+function checkListar(res, req) {
+    require('dotenv').config();
+    const jwt = require("jsonwebtoken");
+    const password = process.env.SECRET_TOKEN;
+    const auth = req.headers.authorization
+    if(!auth) res.status(400).send("Debe enviar el Token");
+    const token = auth.split(' ')[1];
+    try {
+        const usuario = jwt.verify(token, password);
+        const query = "SELECT * from USUARIOS INNER JOIN USUARIOS_ROLES ON usuarios.username = usuarios_roles.username " +
+        "INNER JOIN ROLES ON usuarios_roles.idRol = roles.id where roles.admin = 1 and usuarios.username = ?";
+        return req.connection.query(query,{type: req.connection.QueryTypes.SELECT, replacements: [usuario]});
+    }catch(error){
+        return res.status(401).json({error: "El Token es invalido"})
+    }
+}
+
 const usuario = new UsuarioController();
 
-module.exports = {usuario, isAdmin}
+module.exports = {usuario, isAdmin, checkListar}

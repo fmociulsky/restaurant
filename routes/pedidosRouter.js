@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const {pedido} = require('../controller/pedidosController');
+const utils = require("../utils");
 
 //listado de todos los pedidos
 router.get("/", pedido.listar);
@@ -15,9 +16,9 @@ router.get("/:idPedido", pedido.obtener);
 router.post("/", pedido.crear);
 
 //actualizar un pedido
-router.put("/", pedido.actualizar);
+router.put("/", [utils.checkAdmin], pedido.actualizar);
 
 //eliminar un pedido
-router.delete("/:idPedido", pedido.eliminar);
+router.delete("/:idPedido", [utils.checkAdmin], pedido.eliminar);
 
 module.exports = router;

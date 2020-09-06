@@ -27,7 +27,6 @@ class PedidoController{
                 return res.send(error.original.sqlMessage);
             });
         }
-        console.log(respuesta);
         return res.send("Se creo el pedido");
     }
 
