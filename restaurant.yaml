@@ -138,6 +138,31 @@ paths:
             type: "array"
             items:
               $ref: "#/definitions/Rol"
+  /usuarios/login:
+    post:
+        tags:
+        - "usuarios"
+        summary: "Loguear al Usuario en el sistema"
+        description: ""
+        operationId: "loginUsuario"
+        consumes:
+        - "application/json"
+        - "application/xml"
+        produces:
+        - "application/xml"
+        - "application/json"
+        parameters:
+        - in: "body"
+          name: "body"
+          description: "Usuarios que pueden hacer uso del servicio"
+          required: true
+          schema:
+            $ref: "#/definitions/Usuario"
+        responses:
+          "200":
+            description: "{token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9}"
+          "500":
+            description: "Detalle del error"
   /roles:
     post:
       tags:
@@ -273,7 +298,7 @@ paths:
       - "roles"
       summary: "Remueve la relacion de un Usurio con un Rol"
       description: ""
-      operationId: "asignarRol"
+      operationId: "desasignarRol"
       consumes:
       - "application/json"
       - "application/xml"
